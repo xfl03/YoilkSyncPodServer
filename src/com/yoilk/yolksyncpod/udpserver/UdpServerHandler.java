@@ -1,45 +1,77 @@
 package com.yoilk.yolksyncpod.udpserver;
 
 import java.io.File;
-import java.io.RandomAccessFile;
+import java.io.FileInputStream;
 
+import com.yoilk.yolksyncpod.gui.PodGui;
+
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.DefaultFileRegion;
-import io.netty.channel.FileRegion;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
+import io.netty.util.CharsetUtil;
 
-public class UdpServerHandler extends SimpleChannelInboundHandler<String> {
-	//private static final String CR = System.getProperty("line.separator");
-	private static final String CR=".MESSAGE_END.";
+public class UdpServerHandler extends
+	SimpleChannelInboundHandler<DatagramPacket> {
+	private PodGui pg;
+
+    public UdpServerHandler(PodGui pg0) {
+		// TODO Auto-generated constructor stub
+    	pg=pg0;
+    }
+
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, String msg)
-			throws Exception {
-		File file = new File(msg);
-		System.out.println("Udp got a request: "+msg);
-		if (file.exists()) {
-		    if (!file.isFile()) {
-		    	ctx.writeAndFlush("Not a file : " + file + CR);
-		    	System.out.println(msg+" not a file");
-		    	return;
-		    }
-		    if(!file.getName().endsWith(".mp3")
-		    		&&!file.getName().endsWith(".wav")){
-		    	ctx.writeAndFlush("Access Forbidden : " + file + CR);
-		    	System.out.println(msg+" access forbidden");
-		    	return;
-		    }
-		    //ctx.write(file + " " + file.length() + CR);
-		    System.out.println(msg+" begin");
-		    RandomAccessFile randomAccessFile = new RandomAccessFile(msg, "r");
-		    FileRegion region = new DefaultFileRegion(
-			    randomAccessFile.getChannel(), 0, randomAccessFile.length());
-		    ctx.write(region);
-		    ctx.writeAndFlush(CR);
-		    randomAccessFile.close();
-		    System.out.println(msg+" end");
-		} else {
-		    ctx.writeAndFlush("File not found: " + file + CR);
-		    System.out.println(msg+" not found");
+    public void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet)
+	    throws Exception {
+	String req = packet.content().toString(CharsetUtil.UTF_8);
+	System.out.println("Udp Server Recieved a request: "+req);
+	pg.noti.setText("Sending "+req);
+	File ff=new File(req);
+	if(ff.exists()){
+		if(ff.isFile()){
+			if(ff.getName().endsWith(".mp3")||ff.getName().endsWith(".mp3")){
+				 FileInputStream fis = new FileInputStream(ff);
+				 int fileLen = fis.available();
+				 byte[] buf = new byte[1024];
+                 int numofBlock = fileLen / buf.length;
+                 int lastSize = fileLen % buf.length;
+                 DatagramPacket packet0;
+                 for (int i = 0; i < numofBlock; i++) {
+                     fis.read(buf, 0, buf.length);
+                     packet0 = new DatagramPacket(Unpooled.copiedBuffer(buf),packet.sender());
+                     ctx.writeAndFlush(packet0);
+                     Thread.sleep(1);
+                 }
+                 buf = new byte[lastSize];
+                 fis.read(buf, 0,lastSize);
+                 packet0 = new DatagramPacket(Unpooled.copiedBuffer(buf),packet.sender());
+                 ctx.writeAndFlush(packet0);
+                 Thread.sleep(1);
+                 fis.close();
+                 pg.noti.setText("Sent "+req);
+                 System.out.println(req+" = 1024 * "+numofBlock+" + "+lastSize+" {"+(lastSize==0?numofBlock:numofBlock+1)+")");
+			}else{
+				ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(
+					    "Access Forbidden", CharsetUtil.UTF_8), packet
+					    .sender()));
+			}
+		}else{
+			ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(
+				    "Not A File", CharsetUtil.UTF_8), packet
+				    .sender()));
 		}
+	}else{
+		ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(
+			    "File Not Exists", CharsetUtil.UTF_8), packet
+			    .sender()));
 	}
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+	    throws Exception {
+	ctx.close();
+	cause.printStackTrace();
+    }
 }
+

@@ -290,7 +290,7 @@ public class PodGui {
         noti=new JLabel();
         noti.setText("Welcome to use Yoilk.");
         noti.setFont(boldCourier4);
-        noti.setBounds(5, 187, 385, 15);
+        noti.setBounds(5, 187, 385, 18);
         noti.setHorizontalAlignment(JLabel.CENTER);
         noti.setVerticalAlignment(JLabel.CENTER);
         con.add(noti);

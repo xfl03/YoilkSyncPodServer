@@ -19,7 +19,7 @@ public class YoilkSyncPod {
 		Thread tst1Thread=new Thread(tst1);
 		tst1Thread.setName("TCP Server Thread");
 		tst1Thread.start();
-		UdpServerThread ust1=new UdpServerThread();
+		UdpServerThread ust1=new UdpServerThread(pg);
 		Thread ust1Thread=new Thread(ust1);
 		ust1Thread.setName("UDP Server Thread");
 		ust1Thread.start();

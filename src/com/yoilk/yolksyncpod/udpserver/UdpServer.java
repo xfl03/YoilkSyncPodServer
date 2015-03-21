@@ -1,43 +1,32 @@
 package com.yoilk.yolksyncpod.udpserver;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
+import com.yoilk.yolksyncpod.gui.PodGui;
+
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LineBasedFrameDecoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 
 public class UdpServer {
+	private PodGui pg;
+	public UdpServer(PodGui pg0) {
+		// TODO Auto-generated constructor stub
+		pg=pg0;
+	}
+
+
+
 	public void run(int port) throws Exception {
-		EventLoopGroup bossGroup = new NioEventLoopGroup();
-		EventLoopGroup workerGroup = new NioEventLoopGroup();
+		EventLoopGroup group = new NioEventLoopGroup();
 		try {
-		    ServerBootstrap b = new ServerBootstrap();
-		    b.group(bossGroup, workerGroup)
-			    .channel(NioServerSocketChannel.class)
-			    .option(ChannelOption.SO_BACKLOG, 100)
-			    .childHandler(new ChannelInitializer<SocketChannel>() {
-				public void initChannel(SocketChannel ch)
-					throws Exception {
-				    ch.pipeline().addLast(
-					    new StringEncoder(CharsetUtil.UTF_8),
-					    new LineBasedFrameDecoder(1024),
-					    new StringDecoder(CharsetUtil.UTF_8),
-					    new UdpServerHandler());
-				}
-			    });
-		    ChannelFuture f = b.bind(port).sync();
-		    //System.out.println("Start file server at port : " + port);
-		    f.channel().closeFuture().sync();
+		    Bootstrap b = new Bootstrap();
+		    b.group(group).channel(NioDatagramChannel.class)
+			    .option(ChannelOption.SO_BROADCAST, true)
+			    .handler(new UdpServerHandler(pg));
+		    b.bind(port).sync().channel().closeFuture().await();
 		} finally {
-		    bossGroup.shutdownGracefully();
-		    workerGroup.shutdownGracefully();
+		    group.shutdownGracefully();
 		}
 	}
 
