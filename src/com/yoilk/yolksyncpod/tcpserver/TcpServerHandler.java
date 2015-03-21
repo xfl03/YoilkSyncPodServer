@@ -2,6 +2,7 @@ package com.yoilk.yolksyncpod.tcpserver;
 
 import java.net.InetSocketAddress;
 
+import com.yoilk.yolksyncpod.YoilkSyncPod;
 import com.yoilk.yolksyncpod.gui.PodGui;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -45,7 +46,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		System.out.println("Server receive request : " + body+" FROM "+ClientID );
 		if(!auth){
 			if(body.startsWith("YSPC")){
-				if(body.equalsIgnoreCase("YSPC 0.9")){
+				if(body.equalsIgnoreCase("YSPC "+YoilkSyncPod.VERSION)){
 					auth=true;
 					write(ctx,"AUTH SUCCESS");
 					System.out.println(ClientID+" Auth Success");
