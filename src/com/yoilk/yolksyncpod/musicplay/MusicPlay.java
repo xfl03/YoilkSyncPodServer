@@ -12,12 +12,18 @@ public class MusicPlay {
 	private AudioInputStream stream;
 	public Clip clip2;
 	private AudioFormat format;
+	/**
+	 * Load music file into memory
+	 * 
+	 * @since 0.9
+	 * @param MusicFile(*.mp3,*.wav)
+	 * */
 	public void load(File music){
 		try {
-			System.out.println("runs1");
+			//Get Audio Stream
 			stream = AudioSystem.getAudioInputStream(music);
 			format = stream.getFormat();
-	        if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {
+	        if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {//Set Format
 	            format = new AudioFormat(
 	              AudioFormat.Encoding.PCM_SIGNED,
 	              format.getSampleRate(),
@@ -25,14 +31,14 @@ public class MusicPlay {
 	              format.getChannels(),
 	              format.getChannels() * 2,
 	              format.getSampleRate(),
-	               false);        // big endian
+	               false);
 	            stream = AudioSystem.getAudioInputStream(format, stream);
 	        }
-	        System.out.println("run2");
+	        
+	        //Get Clip
 			clip2 = AudioSystem.getClip();
 	        clip2.open(stream);
-	        clip2.setMicrosecondPosition(0);
-	        System.out.println("320");
+	        clip2.setMicrosecondPosition(0);//Move Point To Beginning
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

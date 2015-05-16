@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="G:/java-lib/netty-all-4.0.25.Final.jar"/>
-	<classpathentry kind="lib" path="G:/java-lib/mp3spi1.9.5.jar"/>
-	<classpathentry kind="lib" path="G:/java-lib/tritonus_share-0.3.6.jar"/>
-	<classpathentry kind="lib" path="G:/java-lib/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="G:/java-lib/io/netty/4.0.25.Final/netty-all-4.0.25.Final.jar"/>
+	<classpathentry kind="lib" path="G:/java-lib/javazoom/spi/mp3spi1.9.5.jar"/>
+	<classpathentry kind="lib" path="G:/java-lib/org/tritonus/tritonus_share-0.3.6.jar"/>
+	<classpathentry kind="lib" path="G:/java-lib/javazoom/jl/jl1.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

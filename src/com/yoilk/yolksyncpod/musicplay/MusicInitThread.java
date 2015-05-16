@@ -15,7 +15,6 @@ public class MusicInitThread implements Runnable {
 	}
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		System.out.println("Begin to load music");
 		long t1=System.currentTimeMillis();
 		mp.load(new File(name));

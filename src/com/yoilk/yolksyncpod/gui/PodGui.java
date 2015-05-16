@@ -23,28 +23,47 @@ import com.yoilk.yolksyncpod.musicplay.MusicTimer;
 import com.yoilk.yolksyncpod.tcpserver.TcpServerPool;
 
 public class PodGui {
+	
 	public JFrame jf;
+	
 	public Container con;
+	
 	public TcpServerPool tsp;
+	
 	public JLabel connect;
+	
 	public JLabel timeNow;
+	
 	public JLabel timeAll;
+	
 	public JLabel musicNow;
+	
 	public JSlider progress;
+	
 	public JButton openMusic;
+	
 	public JButton resendMusic;
+	
 	public JButton playMusic;
+	
 	public JButton stopMusic;
+	
 	public JLabel noti;
+	
 	public String musicFilePath=".";
+	
 	public MusicPlay mp1;
+	
 	public Timer t0;
+	
 	public int oldtt=0;
+	
 	public boolean playing=false;
+	
 	public PodGui(TcpServerPool tsp0) {
-		// TODO Auto-generated constructor stub
 		tsp=tsp0;
 	}
+	
 	public void init(){
 		jf=new JFrame("Yoilk Sync Pod");
 		con = jf.getContentPane();
